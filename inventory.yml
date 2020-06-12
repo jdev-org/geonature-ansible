@@ -1,0 +1,27 @@
+localhost:
+  hosts:
+    127.0.0.1
+  vars:
+    ansible_connection: local
+    locale: fr_FR.UTF-8
+    server_url: http://mon.domaine.com
+    pg_host: localhost
+    pg_port: 5432
+    pg_user: geonatadmin
+    pg_pass: monpassachanger
+    usershub_install: true
+    usershub_release: 2.1.1
+    geonature_release: 2.3.2
+    geonaturedb_drop: false
+    geonaturedb_name: geonature2db
+    gis_srid_local: 2154
+    gis_install_layers: true
+    gis_install_grid: true
+    gis_install_default_dem: true
+    gis_vectorise_dem: false
+    gis_sample_data: true
+    geonaturemodule_install_validation: true
+    geonaturemodule_install_occhab: true
+    proxy_http: ~
+    proxy_https: ~
+    taxhub_release: 1.6.5
