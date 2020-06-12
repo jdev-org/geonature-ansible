@@ -1,0 +1,9 @@
+- name: Database
+  hosts: all
+  become: true
+  tasks:
+    - name: Install packages
+      apt:
+        pkg:
+        - postgresql
+        - postgresql-contrib

@@ -1,0 +1,13 @@
+- name: Frontend
+  hosts: all
+  become: true
+  tasks:
+    - name: Download NVM install script
+      get_url:
+        url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh
+        dest: /tmp/nvm_install.sh
+        mode: '0774'
+    - name: Execute NVM install script
+      shell: /tmp/nvm_install.sh
+    - name: Remove NVM install script
+      file: path=/tmp/nvm_install.sh state=absent

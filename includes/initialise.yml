@@ -1,4 +1,4 @@
-- name: Initialising
+- name: Initialise
   hosts: all
   become: true
   tasks:
@@ -9,3 +9,12 @@
         update_cache: yes
         cache_valid_time: 3600
         force_apt_get: yes
+    - name: Install packages
+      apt:
+        pkg:
+        - locales
+        - ntpdate
+        - curl
+        - unzip
+        - git
+        - wget

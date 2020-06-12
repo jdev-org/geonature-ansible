@@ -1,2 +1,8 @@
 - name: Setting up packages and automatic upgrades
   import_playbook: includes/initialise.yml
+- name: Setting up database
+  import_playbook: includes/database.yml
+- name: Setting up backend
+  import_playbook: includes/backend.yml
+- name: Setting up frontend
+  import_playbook: includes/frontend.yml
