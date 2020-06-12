@@ -2,9 +2,24 @@
   hosts: all
   become: true
   tasks:
+    - name: Environment details
+      debug: msg="{{ ansible_distribution }} {{ ansible_distribution_version }} {{ ansible_userspace_bits }}"
+    - name: Verifying architecture
+      fail: msg="Invalid system architecture. Must be 64-bits."
+      when: not (
+              ansible_facts["userspace_bits"] == "64"
+            )
+    - name: Verifying operating system
+      fail: msg="Invalid operating system. Must be Ubuntu or Debian."
+      when: not (
+              (ansible_facts["distribution"] == "Ubuntu" and ansible_facts["distribution_version"] == "18.04") or
+              (ansible_facts["distribution"] == "Ubuntu" and ansible_facts["distribution_version"] == "20.04") or
+              (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "9") or
+              (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "10")
+            )
     - name: Upgrade packages
       apt:
-        name: '*'
+        name: "*"
         state: latest
         update_cache: yes
         cache_valid_time: 3600
