@@ -1,0 +1,2 @@
+- name: Setting up packages and automatic upgrades
+  import_playbook: includes/initialise.yml

@@ -1,0 +1,11 @@
+- name: Initialising
+  hosts: all
+  become: true
+  tasks:
+    - name: Upgrade packages
+      apt:
+        name: '*'
+        state: latest
+        update_cache: yes
+        cache_valid_time: 3600
+        force_apt_get: yes
