@@ -41,6 +41,7 @@
     - name: Synchronise date/time
       become: true
       shell: ntpdate-debian
+      ignore_errors: yes
     - name: Generate relevant locale
       become: true
       locale_gen:
