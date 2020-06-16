@@ -1,6 +1,5 @@
 - name: Frontend
   hosts: all
-  become: true
   tasks:
     - name: Download NVM install script
       get_url:

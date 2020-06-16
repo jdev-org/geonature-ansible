@@ -37,6 +37,7 @@
         - unzip
         - git
         - wget
+        - build-essential
     - name: Synchronise date/time
       become: true
       shell: ntpdate-debian

@@ -6,3 +6,8 @@
   import_playbook: includes/backend.yml
 - name: Setting up frontend
   import_playbook: includes/frontend.yml
+- name: Setting up TaxHub
+  import_playbook: includes/taxhub.yml
+- name: Setting up UsersHub (if configured)
+  import_playbook: includes/usershub.yml
+  when: usershub_install

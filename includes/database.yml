@@ -1,9 +1,10 @@
 - name: Database
   hosts: all
-  become: true
   tasks:
     - name: Install packages
+      become: true
       apt:
         pkg:
         - postgresql
         - postgresql-contrib
+        - postgis

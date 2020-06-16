@@ -1,8 +1,8 @@
 - name: Backend
   hosts: all
-  become: true
   tasks:
     - name: Install packages
+      become: true
       apt:
         pkg:
         - apache2
