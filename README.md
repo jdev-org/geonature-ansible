@@ -6,3 +6,5 @@ Ansible scripts for the installation of Géonature on Debian 8+ or Ubuntu 18.04+
 
 2. Run playbook
 `ansible-playbook ./install.yml`
+
+Do not run with sudo. You will be asked to enter the password necessary for sudo permissions. 

@@ -4,7 +4,7 @@ localhost:
   vars:
     ansible_connection: local
     locale: fr_FR.UTF-8
-    server_url: http://mon.domaine.com
+    server_url: http://mon.domaine.com/
     pg_host: localhost
     pg_port: 5432
     pg_user: geonatadmin

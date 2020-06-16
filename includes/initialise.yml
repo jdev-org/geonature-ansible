@@ -1,9 +1,11 @@
 - name: Initialise
   hosts: all
-  become: true
   tasks:
     - name: Environment details
-      debug: msg="{{ ansible_distribution }} {{ ansible_distribution_version }} {{ ansible_userspace_bits }}"
+      debug: msg="{{ ansible_user_id }} on {{ ansible_distribution }} {{ ansible_distribution_version }}, {{ ansible_userspace_bits }} bit"
+    - name: Verifying user
+      fail: msg="Invalid user. Must not run as root."
+      when: ansible_facts["user_id"] == "root"
     - name: Verifying architecture
       fail: msg="Invalid system architecture. Must be 64-bits."
       when: not (
@@ -18,6 +20,7 @@
               (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "10")
             )
     - name: Upgrade packages
+      become: true
       apt:
         name: "*"
         state: latest
@@ -25,6 +28,7 @@
         cache_valid_time: 3600
         force_apt_get: yes
     - name: Install packages
+      become: true
       apt:
         pkg:
         - locales
@@ -33,3 +37,20 @@
         - unzip
         - git
         - wget
+    - name: Synchronise date/time
+      become: true
+      shell: ntpdate-debian
+    - name: Generate relevant locale
+      become: true
+      locale_gen:
+        name: "{{ locale }}"
+    - name: Ensure locale is in .bashrc
+      blockinfile:
+        dest: "{{ ansible_env.HOME }}/.bashrc"
+        block: |
+          export LC_ALL={{ locale }}
+          export LANG={{ locale }}
+          export LANGUAGE={{ locale }}
+        marker: "# {mark} ANSIBLE MANAGED"
+        insertbefore: EOF
+        create: yes
