@@ -1,5 +1,10 @@
 - name: TaxHub
   hosts: all
   tasks:
-    - name: TODO
-      debug: msg="TODO"
+    - name: Installing packages for Debian 10 (only)
+      apt:
+        pkg:
+        - libsm6
+        - libxrender1
+        - libfontconfig1
+      when: (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "10")
