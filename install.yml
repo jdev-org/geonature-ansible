@@ -2,10 +2,8 @@
   import_playbook: includes/initialise.yml
 - name: Setting up database
   import_playbook: includes/database.yml
-- name: Setting up backend
-  import_playbook: includes/backend.yml
-- name: Setting up frontend
-  import_playbook: includes/frontend.yml
+- name: Setting up Géonature
+  import_playbook: includes/geonature.yml
 - name: Setting up TaxHub
   import_playbook: includes/taxhub.yml
 - name: Setting up UsersHub (if configured)
