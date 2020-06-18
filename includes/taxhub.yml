@@ -8,3 +8,21 @@
         - libxrender1
         - libfontconfig1
       when: (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "10")
+    - name: Download TaxHub archive
+      get_url:
+        url: "https://github.com/PnX-SI/TaxHub/archive/{{ taxhub_release }}.zip"
+        dest: /tmp/taxhub.zip
+        mode: '0774'
+    - name: Unzip TaxHub archive
+      unarchive:
+        remote_src: true
+        src: /tmp/taxhub.zip
+        dest: /tmp/
+    - name: Move TaxHub files
+      copy:
+        remote_src: true
+        src: "/tmp/TaxHub-{{ taxhub_release }}/"
+        dest: "{{ ansible_env.HOME }}/taxhub"
+        owner: "{{ ansible_user_id }}"
+    - name: Remove TaxHub archive
+      file: path=/tmp/taxhub.zip state=absent

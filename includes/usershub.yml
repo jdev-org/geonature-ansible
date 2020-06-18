@@ -1,5 +1,21 @@
 - name: UsersHub
   hosts: all
   tasks:
-    - name: TODO
-      debug: msg="TODO"
+    - name: Download UsersHub archive
+      get_url:
+        url: "https://github.com/PnX-SI/UsersHub/archive/{{ usershub_release }}.zip"
+        dest: /tmp/usershub.zip
+        mode: '0774'
+    - name: Unzip UsersHub archive
+      unarchive:
+        remote_src: true
+        src: /tmp/usershub.zip
+        dest: /tmp/
+    - name: Move UsersHub files
+      copy:
+        remote_src: true
+        src: "/tmp/UsersHub-{{ usershub_release }}/"
+        dest: "{{ ansible_env.HOME }}/usershub"
+        owner: "{{ ansible_user_id }}"
+    - name: Remove UsersHub archive
+      file: path=/tmp/usershub.zip state=absent
