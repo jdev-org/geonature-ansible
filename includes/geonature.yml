@@ -10,8 +10,56 @@
       shell: /tmp/nvm_install.sh
     - name: Remove NVM install script
       file: path=/tmp/nvm_install.sh state=absent
+
     - name: Install pip
       shell: python3 -m pip install pip==20.1.1
     - name: Install virtualenv
       pip:
         name: virtualenv==20.0.23
+
+    - name: Add localhost as ServerName in Apache
+      become: true
+      blockinfile:
+        dest: "/etc/apache2/apache2.conf"
+        block: |
+          ServerName localhost
+        marker: "# {mark} ANSIBLE MANAGED"
+        insertbefore: EOF
+        create: no
+    - name: Enable Apache module (rewrite)
+      become: true
+      apache2_module:
+        state: present
+        name: rewrite
+    - name: Disable Apache module (mod_pyth)
+      become: true
+      apache2_module:
+        state: absent
+        name: mod_pyth
+    - name: Enable Apache module (wsgi)
+      become: true
+      apache2_module:
+        state: present
+        name: wsgi
+    - name: Restart Apache
+      become: true
+      command: apache2ctl restart
+
+    - name: Download Géonature archive
+      get_url:
+        url: "https://github.com/PnX-SI/GeoNature/archive/{{ geonature_release }}.zip"
+        dest: /tmp/geonature.zip
+        mode: '0774'
+    - name: Unzip Géonature archive
+      unarchive:
+        remote_src: true
+        src: /tmp/geonature.zip
+        dest: /tmp/
+    - name: Move Géonature files
+      copy:
+        remote_src: true
+        src: "/tmp/GeoNature-{{ geonature_release }}/"
+        dest: "{{ ansible_env.HOME }}/geonature"
+        owner: "{{ ansible_user_id }}"
+    - name: Remove Géonature archive
+      file: path=/tmp/geonature.zip state=absent

@@ -3,6 +3,7 @@
   tasks:
     - name: Environment details
       debug: msg="{{ ansible_user_id }} on {{ ansible_distribution }} {{ ansible_distribution_version }}, {{ ansible_userspace_bits }} bit"
+
     - name: Verifying user
       fail: msg="Invalid user. Must not run as root."
       when: ansible_facts["user_id"] == "root"
@@ -19,6 +20,7 @@
               (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "9") or
               (ansible_facts["distribution"] == "Debian" and ansible_facts["distribution_major_version"] == "10")
             )
+
     - name: Upgrade packages
       become: true
       apt:
@@ -65,10 +67,12 @@
         - postgis
         - libpq-dev
         - python3-psycopg2
+
     - name: Synchronise date/time
       become: true
       shell: ntpdate-debian
       ignore_errors: yes
+
     - name: Generate relevant locale
       become: true
       locale_gen:
@@ -83,6 +87,7 @@
         marker: "# {mark} ANSIBLE MANAGED"
         insertbefore: EOF
         create: yes
-    - name: install setfacl support
+
+    - name: Install setfacl support (for Ansible)
       become: yes
       apt: pkg=acl
