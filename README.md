@@ -1,5 +1,7 @@
 # geonature-ansible
 
+*Note this is unfinished, the code is made available for others to reference if they wish to continue the work*
+
 Ansible scripts for the installation of Géonature.
 
 ## Supported operating systems
