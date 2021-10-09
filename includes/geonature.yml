@@ -3,19 +3,22 @@
   tasks:
     - name: Download NVM install script
       get_url:
-        url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh
+        url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh
         dest: /tmp/nvm_install.sh
         mode: '0774'
+
     - name: Execute NVM install script
       shell: /tmp/nvm_install.sh
+
     - name: Remove NVM install script
       file: path=/tmp/nvm_install.sh state=absent
 
     - name: Install pip
-      shell: python3 -m pip install pip==20.1.1
+      shell: python3 -m pip install pip==21.2.4
+
     - name: Install virtualenv
       pip:
-        name: virtualenv==20.0.23
+        name: virtualenv==20.8.1
 
     - name: Add localhost as ServerName in Apache
       become: true
@@ -26,40 +29,78 @@
         marker: "# {mark} ANSIBLE MANAGED"
         insertbefore: EOF
         create: no
-    - name: Enable Apache module (rewrite)
+
+    - name: Enable Apache module 
       become: true
       apache2_module:
         state: present
-        name: rewrite
-    - name: Disable Apache module (mod_pyth)
-      become: true
-      apache2_module:
-        state: absent
-        name: mod_pyth
-    - name: Enable Apache module (wsgi)
-      become: true
-      apache2_module:
-        state: present
-        name: wsgi
+        name: "{{ item }}"
+      with_items:
+        - rewrite
+        - wsgi
+        - proxy
+        - proxy_http
+   
     - name: Restart Apache
       become: true
       command: apache2ctl restart
+
+    - name: disable the default site
+      become: true
+      file:
+        path: "/etc/apache2/sites-enabled/{{ item }}"
+        state: absent
+      with_items:
+        - 000-default
+        - default-ssl
+
+    - name: Apache configuration for geonature
+      become: true
+      template:
+        src: geonature.j2
+        dest: /etc/apache2/sites-available/{{ domain }}.conf
+
+    - name: a2ensite {{ domain }}
+      become: true
+      command: a2ensite {{ domain }}
+      args:
+        creates: /etc/apache2/sites-enabled/{{ domain }}.conf
 
     - name: Download Géonature archive
       get_url:
         url: "https://github.com/PnX-SI/GeoNature/archive/{{ geonature_release }}.zip"
         dest: /tmp/geonature.zip
         mode: '0774'
+
     - name: Unzip Géonature archive
       unarchive:
         remote_src: true
         src: /tmp/geonature.zip
         dest: /tmp/
+
     - name: Move Géonature files
       copy:
         remote_src: true
         src: "/tmp/GeoNature-{{ geonature_release }}/"
         dest: "{{ ansible_env.HOME }}/geonature"
         owner: "{{ ansible_user_id }}"
+
+    - name: Settings for geonature
+      template:
+        src: geonature-settings.j2
+        dest: "{{ ansible_env.HOME }}/geonature/config/settings.ini"
+        
+    - name: Install database
+      become: true
+      command: "cd {{ ansible_env.HOME }}/geonature/install/ && bash install_db.sh"
+
+    - name: Install app
+      become: true
+      command: "cd {{ ansible_env.HOME }}/geonature/install/ && bash install_app.sh"
+
     - name: Remove Géonature archive
       file: path=/tmp/geonature.zip state=absent
+
+    - name: Restart Apache
+      become: true
+      command: apache2ctl restart
