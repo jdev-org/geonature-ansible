@@ -35,8 +35,7 @@
         dest: "{{ ansible_env.HOME }}/taxhub/settings.ini"
       
     - name: Install app
-      become: true
-      command: "cd {{ ansible_env.HOME }}/taxhub/ && bash install_app.sh"
+      command: "chdir={{ ansible_env.HOME }}/taxhub/ bash install_app.sh"
 
     - name: Remove TaxHub archive
       file: path=/tmp/taxhub.zip state=absent

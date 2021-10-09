@@ -91,12 +91,10 @@
         dest: "{{ ansible_env.HOME }}/geonature/config/settings.ini"
         
     - name: Install database
-      become: true
-      command: "cd {{ ansible_env.HOME }}/geonature/install/ && bash install_db.sh"
+      command: "chdir={{ ansible_env.HOME }}/geonature/install/ bash install_db.sh"
 
     - name: Install app
-      become: true
-      command: "cd {{ ansible_env.HOME }}/geonature/install/ && bash install_app.sh"
+      command: "chdir={{ ansible_env.HOME }}/geonature/install/ bash install_app.sh"
 
     - name: Remove Géonature archive
       file: path=/tmp/geonature.zip state=absent
